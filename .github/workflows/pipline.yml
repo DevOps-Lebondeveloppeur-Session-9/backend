@@ -41,4 +41,7 @@ jobs:
                 username: ${{ vars.DOCKER_USERNAME }}
                 password: ${{ secrets.DOCKER_PASSWORD }}
 
+            - name: push docker image
+              run: docker push talel12/backend-session9
+
     # deploy to vps
