@@ -1,0 +1,29 @@
+name: backend-pipeline
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    unit-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                    node-version: 18
+
+            - name: check node version
+              run: node -v
+
+            - name: setup dependencies
+              run: npm install
+            
+            - name: run unit tests
+              run: npm run test
+    
+    # build and push docker image
+    # deploy to vps
