@@ -36,7 +36,7 @@ connectDB();
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Server is running!!- le bon developpeur test 🚀");
+  res.send("Server is running!!!- le bon developpeur test 🚀");
 });
 
 app.get("/health", async (req, res) => {
