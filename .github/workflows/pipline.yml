@@ -311,8 +311,16 @@ jobs:
                 script: |
                   cd /home/user/devops-script/develop/backend
                   sudo git pull
+
+                  # Backup current image if running
+                  if docker ps -a --format '{{.Names}}' | grep -q 'backend'; then
+                    current_image=$(docker inspect backend-api --format='{{.Config.Image}}')
+                    echo "Tagging current image ($current_image) as backup"
+                    docker tag $current_image backend:backup
+                  fi
+
                   sudo docker pull ${{ env.DOCKER_IMAGE_NAME}}
-                  sudo docker compose up -d --force-recreate --remove-orphans
+                  sudo docker compose up -d --force-recreate
             
             - name: Notify Slack - Deployment
               uses: slackapi/slack-github-action@v2.1.0
@@ -355,3 +363,30 @@ jobs:
             else
               echo "Health check passed successfully!"
             fi
+
+    rollback-job:
+      runs-on: ubuntu-latest
+      needs: health-check-job
+      if: failure()
+      steps:
+        - name: Rollback to Backup Image on VPS
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.VPS_HOST }}
+            username: ${{ vars.VPS_USERNAME }}
+            password: ${{ secrets.VPS_PASSWORD }}
+            script: |
+              echo "⚠️ Health check failed. Starting rollback..."
+
+              # Remove broken container
+              docker rm -f backend || true
+              # Start container using backup image
+              docker compose down
+
+              sed -i 's|image: talel12/backend-session9|image: backend:backup|g' docker-compose.yml
+
+              docker compose up -d --force-recreate --remove-orphans
+
+              docker compose ps
+
+              sed -i 's|image: backend:backup|image: talel12/backend-session9|g' docker-compose.yml
