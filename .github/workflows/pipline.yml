@@ -2,7 +2,7 @@ name: backend-pipeline
 
 env:
     DOCKER_IMAGE_NAME: talel12/backend-session9
-    BACKEND_URL: https://api.demo.lebondeveloppeur.net/
+    BACKEND_URL: https://api.demo.lebondeveloppeur.net
     HEALTH_PATH: /health
 
 on:
