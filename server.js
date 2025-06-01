@@ -7,7 +7,7 @@ import productRoutes from "./routes/product.route.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // Middleware.
 app.use(express.json());
@@ -36,7 +36,7 @@ connectDB();
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Server is running!!!- le bon developpeur test 🚀");
+  res.send("Server is running!!- le bon developpeur test 🚀");
 });
 
 app.get("/health", async (req, res) => {
